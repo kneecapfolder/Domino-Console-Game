@@ -34,6 +34,19 @@ public class DominoList {
         curr.next = node;
     }
 
+    // Get value by index
+    public Domino get(int index) {
+        if (this.size == 0 || index < 0 || index > size-1) return null;
+
+        DomiNode curr = this.head;
+        if (index == 0) return head.value;
+        else {
+            for(int i = 0; i < index; i++)
+                curr = curr.next;
+        }
+        return curr.value;
+    }
+
     // Check if list has a specific value
     public boolean has(Domino value) {
         DomiNode curr = this.head;

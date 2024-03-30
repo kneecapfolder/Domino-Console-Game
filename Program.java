@@ -1,8 +1,32 @@
 import java.util.*;
+
+import javax.print.attribute.standard.MediaSize.NA;
+
 import classes.*;
 
 public class Program {
+    // Colors
+    public static String white = "\u001B[37m";
+    public static String green = "\u001B[32m";
+    public static String red = "\u001B[31m";
+    public static String blue = "\u001B[34m";
+    public static String yellow = "\u001B[33m";
+
+    // Init
     public static Scanner reader = new Scanner(System.in);
+
+    public static Player player1 = new Player(
+        null,
+        serve()
+    );
+    public static Player player2 = new Player(
+        null,
+        serve()
+    );
+
+    public static DominoList board = new DominoList();
+
+    public static boolean p1Turn = true;
 
     // Check if 2 domino bricks can be put together
     public static boolean canAttach(Domino d1, Domino d2) {
@@ -33,10 +57,63 @@ public class Program {
 
     // Draw the screen
     public static void draw() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush(); 
 
+        String name = p1Turn ? red+player1.name : blue+player2.name;
+        DominoList deck = p1Turn ? player1.deck : player2.deck;
+        
+        // Display whos turn it is
+        System.out.print(name+"'s"+white+" turn.\n");
+
+        // Display the player's deck
+        for(int i = 0; i < deck.size; i++)
+            System.out.print("╔═══╗");
+
+        System.out.print("\n");
+        for(int i = 0; i < deck.size; i++)
+            System.out.print("║ "+deck.get(i).getValues()[0]+" ║");
+            
+        System.out.print("\n");
+        for(int i = 0; i < deck.size; i++)
+            System.out.print("╠═══╣");
+
+        System.out.print("\n");
+        for(int i = 0; i < deck.size; i++)
+            System.out.print("║ "+deck.get(i).getValues()[1]+" ║");
+
+        System.out.print("\n");
+        for(int i = 0; i < deck.size; i++)
+            System.out.print("╚═══╝");
+
+        System.out.print("\n");
+        for(int i = 0; i < deck.size; i++)
+            System.out.print(" ["+(i+1)+"] ");
+
+        // pick a brick to use
+        int choice;
+
+        System.out.print("\n\n\nPick one of the "+yellow+"dominoes"+white+": "+green);
+        
+        choice = reader.nextInt();
+        
+        while(choice < 1 || choice > deck.size) {
+            System.out.print(red+"Number was out of range "+white+"please try again: "+green);
+            choice = reader.nextInt();
+        }
     }
 
     public static void main(String[] args) {
-        serve();
+        System.out.print("\033[H\033[2J");
+        System.out.flush(); 
+
+        // Setup players
+        System.out.print(red+"Player 1"+white+" enter your name: "+green);
+        player1.name = reader.nextLine();
+        System.out.print(blue+"Player 2"+white+" enter your name: "+green);
+        player2.name = reader.nextLine();
+
+        board.append(new Domino());
+        draw();
     }
 }
