@@ -15,9 +15,15 @@ public class DominoList {
         }
     }
 
+    // Inserts a value to the start of the list
+    public void prepend(Domino value) {
+        DomiNode node = new DomiNode(value);
+        node.next = this.head;
+        this.head = node;
+    }
+
     // Appends an item to the end of the list
     public void append(Domino value) {
-
         DomiNode node = new DomiNode(value);
         this.size++;
         
@@ -57,9 +63,11 @@ public class DominoList {
         return false;
     }
 
+    // Remove value by index
     public void removeAt(int index) {
         if (index < 0 || index >= this.size) return;
 
+        this.size--;
         if (index == 0) this.head = this.head.next;
         else {
             DomiNode prev = this.head;

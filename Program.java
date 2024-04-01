@@ -55,6 +55,9 @@ public class Program {
         System.out.print("\033[H\033[2J");
         System.out.flush(); 
 
+        System.out.print(yellow);
+        board.print();
+
         String name = p1Turn ? red+player1.name : blue+player2.name;
         DominoList deck = p1Turn ? player1.deck : player2.deck;
         
@@ -85,10 +88,10 @@ public class Program {
         for(int i = 0; i < deck.size; i++)
             System.out.print(" ["+(i+1)+"] ");
 
-        choose(deck);
+        choose(p1Turn ? player1 : player2);
     }
 
-    public static void choose(DominoList deck) {
+    public static void choose(Player p) {
         // pick a brick to use
         int choice;
 
@@ -96,13 +99,17 @@ public class Program {
         
         choice = reader.nextInt();
         
-        while(choice < 1 || choice > deck.size) {
+        while(choice < 1 || choice > p.deck.size) {
             System.out.print(red+"Number was out of range "+white+"please try again: "+green);
             choice = reader.nextInt();
         }
 
-        if (canAttach(board.get(0), deck.get(choice-1)))
-            ;
+        if (canAttach(board.get(0), p.deck.get(choice-1))) {
+            board.prepend(p.deck.get(choice-1));
+            p.deck.removeAt(choice-1);
+        }
+
+        draw();
     }
 
     public static void main(String[] args) {
