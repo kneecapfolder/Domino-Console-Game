@@ -57,6 +57,20 @@ public class DominoList {
         return false;
     }
 
+    public void removeAt(int index) {
+        if (index < 0 || index >= this.size) return;
+
+        if (index == 0) this.head = this.head.next;
+        else {
+            DomiNode prev = this.head;
+            DomiNode nextNode;
+            for(int i = 0; i < index-1; i++)
+                prev = prev.next;
+            nextNode = prev.next.next;
+            prev.next = nextNode;
+        }
+    }
+
     // Prints the list
     public void print() {
         if (this.size == 0) {

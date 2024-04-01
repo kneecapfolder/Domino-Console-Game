@@ -1,7 +1,4 @@
 import java.util.*;
-
-import javax.print.attribute.standard.MediaSize.NA;
-
 import classes.*;
 
 public class Program {
@@ -50,8 +47,6 @@ public class Program {
             list.append(brick);
         }
 
-        list.print();
-        
         return list;
     }
 
@@ -90,6 +85,10 @@ public class Program {
         for(int i = 0; i < deck.size; i++)
             System.out.print(" ["+(i+1)+"] ");
 
+        choose(deck);
+    }
+
+    public static void choose(DominoList deck) {
         // pick a brick to use
         int choice;
 
@@ -101,6 +100,9 @@ public class Program {
             System.out.print(red+"Number was out of range "+white+"please try again: "+green);
             choice = reader.nextInt();
         }
+
+        if (canAttach(board.get(0), deck.get(choice-1)))
+            ;
     }
 
     public static void main(String[] args) {
