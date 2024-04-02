@@ -20,6 +20,7 @@ public class DominoList {
         DomiNode node = new DomiNode(value);
         node.next = this.head;
         this.head = node;
+        this.size++;
     }
 
     // Appends an item to the end of the list
@@ -65,7 +66,7 @@ public class DominoList {
 
     // Remove value by index
     public void removeAt(int index) {
-        if (index < 0 || index >= this.size) return;
+        if (this.size == 0 || index < 0 || index >= this.size) return;
 
         this.size--;
         if (index == 0) this.head = this.head.next;

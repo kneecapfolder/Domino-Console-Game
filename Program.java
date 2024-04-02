@@ -52,15 +52,35 @@ public class Program {
 
     // Draw the screen
     public static void draw() {
+        // Clear console
         System.out.print("\033[H\033[2J");
         System.out.flush(); 
 
+        // Print the board
         System.out.print(yellow);
         board.print();
+        System.out.print("\n\n\n");
 
-        String name = p1Turn ? red+player1.name : blue+player2.name;
-        DominoList deck = p1Turn ? player1.deck : player2.deck;
-        
+        // Setup player-specific vars
+        String name;
+        DominoList deck;
+
+        if (p1Turn) {
+            name = blue+player1.name;
+            deck = player1.deck;
+        }
+        else {
+            name = blue+player2.name;
+            deck = player2.deck;
+        }
+
+        // Check if the current player has a brick to put
+        for(int i = 0; i < board.size; i++) {
+            for(int j = 0; j < deck.size; j++) {
+                if (canAttach(board.get(i), deck.get(j))) ;
+            }
+        }
+
         // Display whos turn it is
         System.out.print(name+"'s"+white+" turn.\n");
 
@@ -108,8 +128,10 @@ public class Program {
             board.prepend(p.deck.get(choice-1));
             p.deck.removeAt(choice-1);
         }
-
-        draw();
+        else if (canAttach(board.get(board.size-1), p.deck.get(choice-1))) {
+            board.append(p.deck.get(choice-1));
+            p.deck.removeAt(choice-1);
+        }
     }
 
     public static void main(String[] args) {
@@ -123,6 +145,10 @@ public class Program {
         player2.name = reader.nextLine();
 
         board.append(new Domino());
-        draw();
+
+        while(true) {
+            draw();
+            p1Turn = !p1Turn;
+        }
     }
 }
