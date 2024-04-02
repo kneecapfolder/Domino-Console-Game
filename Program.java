@@ -62,26 +62,45 @@ public class Program {
         System.out.print("\n\n\n");
 
         // Setup player-specific vars
-        String name;
+        String name = "";
         DominoList deck;
+        boolean[] possible = {};
+        boolean flag = false;
 
-        if (p1Turn) {
-            name = blue+player1.name;
-            deck = player1.deck;
-        }
-        else {
-            name = blue+player2.name;
-            deck = player2.deck;
-        }
+        if (p1Turn) deck = player1.deck;
+        else deck = player2.deck;
 
-        // Check if the current player has a brick to put
-        for(int i = 0; i < board.size; i++) {
-            for(int j = 0; j < deck.size; j++) {
-                if (canAttach(board.get(i), deck.get(j))) ;
+        while (!flag) {
+            possible = new boolean[deck.size];
+
+            if (p1Turn) {
+                name = red+player1.name;
+                deck = player1.deck;
+            }
+            else {
+                name = blue+player2.name;
+                deck = player2.deck;
+            }
+
+            // Get array of possible choices
+            for(int i = 0; i < deck.size; i++) {
+                if (canAttach(board.get(0), deck.get(i)) ||
+                canAttach(board.get(board.size-1), deck.get(i))) {
+                    possible[i] = true;
+                    flag = true;
+                }
+                else possible[i] = false;
+            }
+
+            // Check if the current player has a brick to put
+            if (!flag) {
+                p1Turn = !p1Turn;
+                System.out.println(name+"'s "+yellow+"turn passed.\n");
             }
         }
+        
 
-        // Display whos turn it is
+        
         System.out.print(name+"'s"+white+" turn.\n");
 
         // Display the player's deck
@@ -108,10 +127,10 @@ public class Program {
         for(int i = 0; i < deck.size; i++)
             System.out.print(" ["+(i+1)+"] ");
 
-        choose(p1Turn ? player1 : player2);
+        choose(p1Turn ? player1 : player2, possible);
     }
 
-    public static void choose(Player p) {
+    public static void choose(Player p, boolean[] possible) {
         // pick a brick to use
         int choice;
 
@@ -119,8 +138,8 @@ public class Program {
         
         choice = reader.nextInt();
         
-        while(choice < 1 || choice > p.deck.size) {
-            System.out.print(red+"Number was out of range "+white+"please try again: "+green);
+        while(choice < 1 || choice > p.deck.size || !possible[choice-1]) {
+            System.out.print(red+"Invalid choice "+white+"please try again: "+green);
             choice = reader.nextInt();
         }
 
