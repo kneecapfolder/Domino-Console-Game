@@ -37,19 +37,27 @@ public class Domino {
         return this.usable;
     }
 
+    // Compare 2 domino bricks
     public static boolean compare(Domino brick1, Domino brick2) {
         boolean flag = true;
 
         for(int i = 0; i < 2; i++)
-            if (brick1.getValues()[0] != brick2.getValues()[1]) flag = false;
+            if (brick1.getValues()[i] != brick2.getValues()[i]) flag = false;
         
         if (flag) return true;
 
         // Checked flipped array
         else for(int i = 0; i < 2; i++)
-            if (brick1.getValues()[0] != brick2.getValues()[1]) return false;
+            if (brick1.getValues()[i] != brick2.getValues()[1-i]) return false;
 
         return true;
+    }
+
+    // Flip the order of values
+    public void flip() {
+        int temp = this.values[0];
+        this.values[0] = this.values[1];
+        this.values[1] = temp;
     }
 
     public void printStats() {

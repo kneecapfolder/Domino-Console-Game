@@ -26,10 +26,10 @@ public class Program {
     public static boolean p1Turn = true;
 
     // Check if 2 domino bricks can be put together
-    public static int canAttach(Domino d1, Domino d2) {
-        for(int i = 0; i < 2; i++)
-            for(int j = 0; j < 2; j++)
-                if (d1.getUsable()[i] && d1.getValues()[i] == d2.getValues()[j]) return j;
+    public static int canAttach(Domino brick1, Domino brick2, int index) {
+        if (index != 0 && index != 1) return -1;
+        for(int j = 0; j < 2; j++)
+            if (brick1.getUsable()[index] && brick1.getValues()[index] == brick2.getValues()[j]) return j;
         return -1;
     }
 
@@ -51,7 +51,7 @@ public class Program {
     }
 
     // Draw the screen
-    public static void draw() {
+    public static void render() {
         // Clear console
         System.out.print("\033[H\033[2J");
         System.out.flush(); 
@@ -84,8 +84,8 @@ public class Program {
 
             // Get array of possible choices
             for(int i = 0; i < deck.size; i++) {
-                if (canAttach(board.get(0), deck.get(i)) != -1 ||
-                canAttach(board.get(board.size-1), deck.get(i)) != -1) {
+                if (canAttach(board.get(0), deck.get(i), 0) != -1 ||
+                canAttach(board.get(board.size-1), deck.get(i), 1) != -1) {
                     possible[i] = true;
                     flag = true;
                 }
@@ -125,7 +125,9 @@ public class Program {
         for(int i = 0; i < deck.size; i++)
             System.out.print(" ["+(i+1)+"] ");
 
-        choose(p1Turn ? player1 : player2, possible);
+        // Let the user choose a brick to use
+        if (p1Turn) choose(player1, possible);
+        else choose(player2, possible);
     }
 
     public static void choose(Player p, boolean[] possible) {
@@ -143,23 +145,22 @@ public class Program {
 
         // See if the chosen brick is attachable on any end of the board
         int[] attachmentIndex = new int[] {
-            canAttach(board.get(0), p.deck.get(choice-1)),
-            canAttach(board.get(board.size-1), p.deck.get(choice-1))
+            canAttach(board.get(0), p.deck.get(choice-1), 0),
+            canAttach(board.get(board.size-1), p.deck.get(choice-1), 1)
         };
         
         if (attachmentIndex[0] != -1 || attachmentIndex[1] != -1) {
-            boolean[] usable = new boolean[] {true, true};
 
             if (attachmentIndex[0] != -1) {
                 board.get(0).setUsable(false, 0);
-                usable[attachmentIndex[0]] = false;
-                p.deck.get(choice-1).setUsable(usable);
+                if (attachmentIndex[0] == 0) p.deck.get(0).flip();
+                p.deck.get(choice-1).setUsable(new boolean[] {true, false});
                 board.prepend(p.deck.get(choice-1));
             }
             else {
                 board.get(board.size-1).setUsable(false, 1);
-                usable[attachmentIndex[1]] = false;
-                p.deck.get(choice-1).setUsable(usable);
+                if (attachmentIndex[1] == 1) p.deck.get(choice-1).flip();
+                p.deck.get(choice-1).setUsable(new boolean[] {false, true});
                 board.append(p.deck.get(choice-1));
             }
 
@@ -180,7 +181,7 @@ public class Program {
         board.append(new Domino());
 
         while(true) {
-            draw();
+            render();
             p1Turn = !p1Turn;
         }
     }
