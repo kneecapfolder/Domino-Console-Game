@@ -37,20 +37,24 @@ public class Program {
     public static DominoList serve() {
         DominoList list = new DominoList();
         
-        for(int i = 0; i < 7; i++) {
-            Domino brick = new Domino();
-            
-            // Regenerate the brick until it's unique
-            while(list.has(brick))
-                brick = new Domino();
-            
-            list.append(brick);
-        }
+        for(int i = 0; i < 7; i++)
+            list.append(draw(list));
 
         return list;
     }
 
-    // Draw the screen
+    // Draw a random domino brick thats not in the deck
+    public static Domino draw(DominoList deck) {
+        Domino brick = new Domino();
+
+        // Regenerate the brick until it's unique
+        while(deck.has(brick))
+            brick = new Domino();
+        
+        return brick;
+    }
+
+    // Render the screen
     public static void render() {
         // Clear console
         System.out.print("\033[H\033[2J");
@@ -63,15 +67,11 @@ public class Program {
 
         // Setup player-specific vars
         String name = "";
-        DominoList deck;
+        DominoList deck = new DominoList();
         boolean[] possible = {};
         boolean flag = false;
 
-        if (p1Turn) deck = player1.deck;
-        else deck = player2.deck;
-
         while (!flag) {
-            possible = new boolean[deck.size];
 
             if (p1Turn) {
                 name = red+player1.name;
@@ -81,6 +81,8 @@ public class Program {
                 name = blue+player2.name;
                 deck = player2.deck;
             }
+
+            possible = new boolean[deck.size];
 
             // Get array of possible choices
             for(int i = 0; i < deck.size; i++) {
@@ -95,7 +97,12 @@ public class Program {
             // Check if the current player has a brick to put
             if (!flag) {
                 p1Turn = !p1Turn;
-                System.out.println(name+"'s "+yellow+"turn passed.\n");
+                System.out.println(name+"'s "+yellow+"turn passed.");
+                if (deck.size < 7) {
+                    deck.append(draw(deck));
+                    System.out.println(green+"+ 1 brick added");
+                }
+                System.out.print("\n");
             }
         }
         
@@ -152,14 +159,14 @@ public class Program {
         if (attachmentIndex[0] != -1 || attachmentIndex[1] != -1) {
 
             if (attachmentIndex[0] != -1) {
-                board.get(0).setUsable(false, 0);
                 if (attachmentIndex[0] == 0) p.deck.get(0).flip();
+                board.get(0).setUsable(false, 0);
                 p.deck.get(choice-1).setUsable(new boolean[] {true, false});
                 board.prepend(p.deck.get(choice-1));
             }
             else {
-                board.get(board.size-1).setUsable(false, 1);
                 if (attachmentIndex[1] == 1) p.deck.get(choice-1).flip();
+                board.get(board.size-1).setUsable(false, 1);
                 p.deck.get(choice-1).setUsable(new boolean[] {false, true});
                 board.append(p.deck.get(choice-1));
             }
@@ -171,6 +178,18 @@ public class Program {
     public static void main(String[] args) {
         System.out.print("\033[H\033[2J");
         System.out.flush(); 
+
+        // Start screen
+        System.out.println(yellow +
+            "  _____                  _             \n" +
+            " |  __ \\                (_)            \n" +
+            " | |  | | ___  _ __ ___  _ _ __   ___  \n" +
+            " | |  | |/ _ \\| '_ ` _ \\| | '_ \\ / _ \\ \n" +
+            " | |__| | (_) | | | | | | | | | | (_) |\n" +
+            " |_____/ \\___/|_| |_| |_|_|_| |_|\\___/ \n" +
+            "                                       \n" +
+            "                                       \n"
+        );
 
         // Setup players
         System.out.print(red+"Player 1"+white+" enter your name: "+green);
