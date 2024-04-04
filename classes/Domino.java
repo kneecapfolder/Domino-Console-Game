@@ -2,20 +2,39 @@ package classes;
 
 public class Domino {
     private int[] values = new int[2];
+    private boolean[] usable = new boolean[2];
 
     public Domino() {
         this.values = new int[]{
             (int)(Math.random() * 6 + 1),
             (int)(Math.random() * 6 + 1)
         };
+        this.usable = new boolean[] {
+            true, true
+        };
     }
 
+    // Set methods
     public void setValues(int[] values) {
         this.values = values;
     }
 
+    public void setUsable(boolean[] usable) {
+        this.usable = usable;
+    }
+
+    public void setUsable(boolean usable, int index) {
+        if (index != 0 && index != 1) return;
+        this.usable[index] = usable;
+    }
+
+    // Get methods
     public int[] getValues() {
         return this.values;
+    }
+
+    public boolean[] getUsable() {
+        return this.usable;
     }
 
     public static boolean compare(Domino brick1, Domino brick2) {

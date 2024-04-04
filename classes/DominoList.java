@@ -82,17 +82,32 @@ public class DominoList {
 
     // Prints the list
     public void print() {
+        String white = "\u001B[37m";
+        String yellow = "\u001B[33m";
+
         if (this.size == 0) {
             System.out.println("List is empty");
             return;
         }
 
-        String str = "[ ";
+        String str = white+"[ ";
         DomiNode curr = this.head;
 
         while(curr != null) {
             int[] values = curr.value.getValues();
-            str += "|" + values[0] + "," + values[1] + "| ";
+            str += "|";
+
+            if (curr.value.getUsable()[0]) str += yellow;
+            else str += white;
+
+            str += values[0];
+            str += white + ",";
+
+            if (curr.value.getUsable()[1]) str += yellow;
+            else str += white;
+
+            str += values[1];
+            str += white + "| ";
             curr = curr.next;
         }
 

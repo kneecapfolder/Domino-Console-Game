@@ -26,11 +26,11 @@ public class Program {
     public static boolean p1Turn = true;
 
     // Check if 2 domino bricks can be put together
-    public static boolean canAttach(Domino d1, Domino d2) {
+    public static int canAttach(Domino d1, Domino d2) {
         for(int i = 0; i < 2; i++)
             for(int j = 0; j < 2; j++)
-                if (d1.getValues()[i] == d2.getValues()[j]) return true;
-        return false;
+                if (d1.getUsable()[i] && d1.getValues()[i] == d2.getValues()[j]) return j;
+        return -1;
     }
 
     // Create a deck of 7 dominos
@@ -84,8 +84,8 @@ public class Program {
 
             // Get array of possible choices
             for(int i = 0; i < deck.size; i++) {
-                if (canAttach(board.get(0), deck.get(i)) ||
-                canAttach(board.get(board.size-1), deck.get(i))) {
+                if (canAttach(board.get(0), deck.get(i)) != -1 ||
+                canAttach(board.get(board.size-1), deck.get(i)) != -1) {
                     possible[i] = true;
                     flag = true;
                 }
@@ -98,8 +98,6 @@ public class Program {
                 System.out.println(name+"'s "+yellow+"turn passed.\n");
             }
         }
-        
-
         
         System.out.print(name+"'s"+white+" turn.\n");
 
@@ -143,12 +141,28 @@ public class Program {
             choice = reader.nextInt();
         }
 
-        if (canAttach(board.get(0), p.deck.get(choice-1))) {
-            board.prepend(p.deck.get(choice-1));
-            p.deck.removeAt(choice-1);
-        }
-        else if (canAttach(board.get(board.size-1), p.deck.get(choice-1))) {
-            board.append(p.deck.get(choice-1));
+        // See if the chosen brick is attachable on any end of the board
+        int[] attachmentIndex = new int[] {
+            canAttach(board.get(0), p.deck.get(choice-1)),
+            canAttach(board.get(board.size-1), p.deck.get(choice-1))
+        };
+        
+        if (attachmentIndex[0] != -1 || attachmentIndex[1] != -1) {
+            boolean[] usable = new boolean[] {true, true};
+
+            if (attachmentIndex[0] != -1) {
+                board.get(0).setUsable(false, 0);
+                usable[attachmentIndex[0]] = false;
+                p.deck.get(choice-1).setUsable(usable);
+                board.prepend(p.deck.get(choice-1));
+            }
+            else {
+                board.get(board.size-1).setUsable(false, 1);
+                usable[attachmentIndex[1]] = false;
+                p.deck.get(choice-1).setUsable(usable);
+                board.append(p.deck.get(choice-1));
+            }
+
             p.deck.removeAt(choice-1);
         }
     }
