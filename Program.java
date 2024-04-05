@@ -74,11 +74,11 @@ public class Program {
         while (!flag) {
 
             if (p1Turn) {
-                name = red+player1.name;
+                name = player1.name;
                 deck = player1.deck;
             }
             else {
-                name = blue+player2.name;
+                name = player2.name;
                 deck = player2.deck;
             }
 
@@ -193,15 +193,27 @@ public class Program {
 
         // Setup players
         System.out.print(red+"Player 1"+white+" enter your name: "+green);
-        player1.name = reader.nextLine();
+        player1.name = red + reader.nextLine();
         System.out.print(blue+"Player 2"+white+" enter your name: "+green);
-        player2.name = reader.nextLine();
+        player2.name = blue + reader.nextLine();
 
         board.append(new Domino());
 
-        while(true) {
+        String winner = "";
+
+        while(winner == "") {
             render();
+            if (player1.deck.size == 0)
+                winner = player1.name;
+            else if (player2.deck.size == 0)
+                winner = player2.name;
+
             p1Turn = !p1Turn;
         }
+        
+        System.out.print("\033[H\033[2J");
+        System.out.flush(); 
+
+        System.out.print(winner + yellow + " won!");
     }
 }
